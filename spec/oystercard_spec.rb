@@ -33,16 +33,12 @@ describe Oystercard do
       expect( subject.touch_in).to be true
     end
   end
-  
+
   describe '#touch_out' do
     it 'returns "not in use"' do
       expect(subject.touch_out).to be false
     end
 
-    it 'charges for journey' do
-      min_balance = Oystercard::MIN_BALANCE
-      expect{subject.touch_out}.to change{subject.balance}.by(-min_balance)
-    end
   end
 
   context 'when not in journey' do
