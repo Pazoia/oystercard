@@ -35,6 +35,13 @@ describe Oystercard do
 
     it 'does not allow touch in, not enough funds' do
       expect{ subject.touch_in }.to raise_error("Not enough funds on card")
+      subject.top_up(10)
+      expect( subject.touch_in).to be true
+    end
+
+    it 'raises an error if minimum fare not met' do
+      min_balance = Oystercard::MIN_BALANCE
+      expect{ subject.touch_in }.to raise_error("Minimum fare of £#{min_balance} not met")
     end
   end
 
@@ -51,6 +58,9 @@ describe Oystercard do
   end
 
   context 'when in journey' do
+    before do
+      subject.top_up(10)
+    end
     it 'returns true' do
       subject.top_up(2)
       subject.touch_in
