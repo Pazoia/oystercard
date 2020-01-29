@@ -39,6 +39,13 @@ describe Oystercard do
       expect(subject.touch_out).to be false
     end
 
+    it "balance should deduct by #{Oystercard::MIN_BALANCE}" do
+      subject.top_up(10)
+      subject.touch_in
+      expect { subject.touch_out }.to change { subject.balance }.by(-Oystercard::MIN_BALANCE)
+    end
+
+
   end
 
   context 'when not in journey' do
