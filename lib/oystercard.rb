@@ -2,7 +2,7 @@ class Oystercard
   attr_reader :balance
   MAX_BALANCE = 90
   MIN_BALANCE = 1
-  
+
   def initialize
     @balance = 0
     @in_use = false
@@ -12,7 +12,7 @@ class Oystercard
     fail "Amount entered exceeds top limit of £#{MAX_BALANCE}" if maximum_limit?(amount)
     @balance += amount
   end
-  
+
   def touch_in
     fail "Not enough funds on card" if @balance < MIN_BALANCE
     @in_use = true
@@ -31,8 +31,6 @@ class Oystercard
   def maximum_limit?(amount)
     balance + amount > MAX_BALANCE
   end
-<<<<<<< HEAD
-=======
 
   def minimum_balance?
     @balance < MIN_BALANCE
@@ -41,5 +39,5 @@ class Oystercard
   def deduct(amount)
     @balance -= amount
   end
->>>>>>> e53e916b8fe546e1aa9cff72eea6d1267c641f66
+
 end
