@@ -21,12 +21,6 @@ describe Oystercard do
     end
   end
 
-  describe '#deduct' do
-    it 'substracts money from balance' do
-      expect{ subject.deduct(1) }.to change{subject.balance}.by(-1)
-    end
-  end
-
   describe '#touch_in' do
     it 'returns "in use" ' do
       subject.top_up(2)
@@ -48,6 +42,11 @@ describe Oystercard do
   describe '#touch_out' do
     it 'returns "not in use"' do
       expect(subject.touch_out).to be false
+    end
+
+    it 'charges for journey' do
+      min_balance = Oystercard::MIN_BALANCE
+      expect{subject.touch_out}.to change{subject.balance}.by(-min_balance)
     end
   end
 

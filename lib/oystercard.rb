@@ -12,10 +12,6 @@ class Oystercard
     fail "Amount entered exceeds top limit of £#{MAX_BALANCE}" if maximum_limit?(amount)
     @balance += amount
   end
-
-  def deduct(amount)
-    @balance -= amount
-  end
   
   def touch_in
     fail "Not enough funds on card" if @balance < MIN_BALANCE
@@ -23,6 +19,7 @@ class Oystercard
   end
 
   def touch_out
+    deduct(MIN_BALANCE)
     @in_use = false
   end
 
@@ -34,4 +31,15 @@ class Oystercard
   def maximum_limit?(amount)
     balance + amount > MAX_BALANCE
   end
+<<<<<<< HEAD
+=======
+
+  def minimum_balance?
+    @balance < MIN_BALANCE
+  end
+
+  def deduct(amount)
+    @balance -= amount
+  end
+>>>>>>> e53e916b8fe546e1aa9cff72eea6d1267c641f66
 end
