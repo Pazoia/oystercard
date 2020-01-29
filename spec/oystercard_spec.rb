@@ -1,12 +1,16 @@
 require 'oystercard'
 
 describe Oystercard do
-  it { is_expected.to respond_to(:balance)}
 
-  it { is_expected.to respond_to(:touch_in) }
+before(:each) do
+  station = double('Aldgate')
+  subject.top_up(20)
+  subject.touch_in(station)
+end
 
   it 'returns balance of 0' do
-    expect(subject.balance).to eq 0
+    card = Oystercard.new
+    expect(card.balance).to eq 0
   end
 
   describe '#top_up' do
@@ -16,21 +20,28 @@ describe Oystercard do
 
     it 'does not allow balance to exceed 90' do
       max_balance = Oystercard::MAX_BALANCE
-      subject.top_up(max_balance)
-      expect{ subject.top_up(1) }.to raise_error("Amount entered exceeds top limit of £#{max_balance}")
+      card = Oystercard.new
+      card.top_up(max_balance)
+      expect{ card.top_up(1) }.to raise_error("Amount entered exceeds top limit of £#{max_balance}")
     end
   end
 
   describe '#touch_in' do
     it 'returns "in use" ' do
-      subject.top_up(2)
-      expect(subject.touch_in).to be true
+      expect(subject.in_use).to be true
     end
 
+    it 'saves the starting station' do
+      station = double("Aldgate")
+      subject.top_up(20)
+      subject.touch_in(station)
+      expect(subject.journey_start).to eq(station)
+    end
+    
     it 'does not allow touch in, not enough funds' do
-      expect{ subject.touch_in }.to raise_error("Not enough funds on card")
-      subject.top_up(10)
-      expect( subject.touch_in).to be true
+      card = Oystercard.new
+      station = double('Aldgate')
+      expect{ card.touch_in(station) }.to raise_error("Not enough funds on card")
     end
   end
 
@@ -40,29 +51,16 @@ describe Oystercard do
     end
 
     it "balance should deduct by #{Oystercard::MIN_BALANCE}" do
-      subject.top_up(10)
-      subject.touch_in
       expect { subject.touch_out }.to change { subject.balance }.by(-Oystercard::MIN_BALANCE)
-    end
-
-
-  end
-
-  context 'when not in journey' do
-    it 'returns false' do
-      expect(subject.in_journey?).to be false
     end
   end
 
   context 'when in journey' do
-    before do
-      subject.top_up(10)
-    end
+ 
     it 'returns true' do
-      subject.top_up(2)
-      subject.touch_in
       expect(subject.in_journey?).to be true
     end
+
   end
 
 end
