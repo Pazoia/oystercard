@@ -29,7 +29,12 @@ describe Oystercard do
 
   describe '#touch_in' do
     it 'returns "in use" ' do
-      expect( subject.touch_in).to be true
+      subject.top_up(2)
+      expect(subject.touch_in).to be true
+    end
+
+    it 'does not allow touch in, not enough funds' do
+      expect{ subject.touch_in }.to raise_error("Not enough funds on card")
     end
   end
 
@@ -47,6 +52,7 @@ describe Oystercard do
 
   context 'when in journey' do
     it 'returns true' do
+      subject.top_up(2)
       subject.touch_in
       expect(subject.in_journey?).to be true
     end
