@@ -2,13 +2,17 @@ require 'oystercard'
 
 describe Oystercard do
 
-  let (:station) { double :station }
+  let (:entry_station) { double :entry_station }
   let (:exit_station) { double :exit_station }
 
 before(:each) do
   subject.top_up(20)
-  subject.touch_in(station)
+  subject.touch_in(entry_station)
 end
+
+  it 'equals an empty hash' do
+    expect(subject.journeys).to eq({})
+  end
 
   it 'returns balance of 0' do
     card = Oystercard.new
@@ -33,13 +37,13 @@ end
   # save entry_station to our new hash (journeys)
 
     it 'saves the starting station' do
-      subject.touch_in(station)
-      expect(subject.entry_station).to eq(station)
+      subject.touch_in(entry_station)
+      expect(subject.entry_station).to eq(entry_station)
     end
     
     it 'does not allow touch in, not enough funds' do
       card = Oystercard.new
-      expect{ card.touch_in(station) }.to raise_error("Not enough funds on card")
+      expect{ card.touch_in(entry_station) }.to raise_error("Not enough funds on card")
     end
   end
 
@@ -56,11 +60,16 @@ end
     end
 
     it "should forget forget entry station" do
-      expect { subject.touch_out(exit_station) }.to change {subject.entry_station}.from(station).to(nil)
+      expect { subject.touch_out(exit_station) }.to change {subject.entry_station}.from(entry_station).to(nil)
     end
 
     it "saves the exit station" do
-      expect( subject.touch_out(exit_station) ).to eq(exit_station)
+      # expect( subject.touch_out(exit_station) ).to eq(exit_station)
+      expect { subject.touch_out(exit_station) }.to change { subject.exit_station }.from(nil).to(exit_station)
+    end
+
+    it "saves a whole journey into journeys hash" do
+      expect { subject.touch_out(exit_station) }.to change { subject.journeys }.from({}).to({entry: entry_station, exit: exit_station})
     end
   end
 
