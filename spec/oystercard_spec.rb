@@ -3,6 +3,7 @@ require 'oystercard'
 describe Oystercard do
 
   let (:station) { double :station }
+  let (:exit_station) { double :exit_station }
 
 before(:each) do
   subject.top_up(20)
@@ -28,9 +29,8 @@ end
   end
 
   describe '#touch_in' do
-    it 'returns "in use" ' do
-      expect(subject.in_use).to be true
-    end
+
+  # save entry_station to our new hash (journeys)
 
     it 'saves the starting station' do
       subject.touch_in(station)
@@ -43,17 +43,24 @@ end
     end
   end
 
-  describe '#touch_out' do
-    it 'returns "not in use"' do
-      expect(subject.touch_out).to be false
+  describe '#touch_out(exit_station)' do
+
+  # save exit_station to our new hash (journeys)
+
+    it 'changes @entry_station status' do
+      expect(subject.touch_out(exit_station)).to be(nil)
     end
 
     it "balance should deduct by #{Oystercard::MIN_BALANCE}" do
-      expect { subject.touch_out }.to change { subject.balance }.by(-Oystercard::MIN_BALANCE)
+      expect { subject.touch_out(exit_station) }.to change { subject.balance }.by(-Oystercard::MIN_BALANCE)
     end
 
     it "should forget forget entry station" do
-      expect { subject.touch_out }.to change {subject.entry_station}.from(station).to(nil)
+      expect { subject.touch_out(exit_station) }.to change {subject.entry_station}.from(station).to(nil)
+    end
+
+    it "saves the exit station" do
+      expect( subject.touch_out(exit_station) ).to eq(exit_station)
     end
   end
 
