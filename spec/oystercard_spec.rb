@@ -2,8 +2,9 @@ require 'oystercard'
 
 describe Oystercard do
 
+  let (:station) { double :station }
+
 before(:each) do
-  station = double('Aldgate')
   subject.top_up(20)
   subject.touch_in(station)
 end
@@ -32,15 +33,12 @@ end
     end
 
     it 'saves the starting station' do
-      station = double("Aldgate")
-      subject.top_up(20)
       subject.touch_in(station)
-      expect(subject.journey_start).to eq(station)
+      expect(subject.entry_station).to eq(station)
     end
     
     it 'does not allow touch in, not enough funds' do
       card = Oystercard.new
-      station = double('Aldgate')
       expect{ card.touch_in(station) }.to raise_error("Not enough funds on card")
     end
   end
@@ -53,6 +51,10 @@ end
     it "balance should deduct by #{Oystercard::MIN_BALANCE}" do
       expect { subject.touch_out }.to change { subject.balance }.by(-Oystercard::MIN_BALANCE)
     end
+
+    it "should forget forget entry station" do
+      expect { subject.touch_out }.to change {subject.entry_station}.from(station).to(nil)
+    end
   end
 
   context 'when in journey' do
@@ -60,7 +62,5 @@ end
     it 'returns true' do
       expect(subject.in_journey?).to be true
     end
-
   end
-
 end
