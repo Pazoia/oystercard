@@ -6,12 +6,14 @@ describe Oystercard do
   let (:exit_station) { double :exit_station }
   let (:oyster) { Oystercard.new }
 
-  it 'equals an empty hash' do
-    expect(oyster.journeys).to eq([])
-  end
+  describe 'new oyster card' do
+    it 'equals an empty hash' do
+      expect(oyster.journeys).to eq([])
+    end
 
-  it 'returns balance of 0' do
-    expect(oyster.balance).to eq 0
+    it 'returns balance of 0' do
+      expect(oyster.balance).to eq 0
+    end
   end
 
   describe '#top_up' do
